@@ -46,15 +46,18 @@
     const screenImg = document.getElementById('screen');
     const fullscreenBtn = document.getElementById('fullscreen-btn');
 
-    // ✅ Correct WebSocket URL in HTTP mode
+    // ✅ Your reserved ngrok domain here
     const wsUrl = "wss://roon-viewer.ngrok.dev/ws";
+
     const password = prompt("Enter Password:");
     const socket = new WebSocket(wsUrl);
     socket.binaryType = 'blob';
 
     socket.onopen = function() {
-      console.log("[Mini-Dev] Connected. Sending password...");
-      socket.send(password);
+      console.log("[Mini-Dev] Connected. Sending password in 100ms...");
+      setTimeout(() => {
+        socket.send(password);
+      }, 100); // small delay to ensure connection is stable
     };
 
     socket.onmessage = function(event) {
