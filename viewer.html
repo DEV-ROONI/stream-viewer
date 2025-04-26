@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Screen Stream Viewer</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: black;
+      overflow: auto;
+      height: 100%;
+      width: 100%;
+    }
+    #screen {
+      display: block;
+      max-width: 100%;
+      max-height: 100%;
+      margin: auto;
+      object-fit: contain;
+      background: black;
+    }
+    #fullscreen-btn {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      font-size: 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      z-index: 9999;
+    }
+    #fullscreen-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+  </style>
+</head>
+<body>
+  <button id="fullscreen-btn">Fullscreen</button>
+  <img id="screen" alt="Streaming screen..." />
+
+  <script>
+    const screenImg = document.getElementById('screen');
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+    // 💥 HARD-CODE YOUR ngrok WebSocket address here
+    const wsUrl = "ws://2.tcp.ngrok.io:11585"; // <<< YOUR NGROK TCP ADDRESS GOES HERE!
+
+    const password = prompt("Enter Password:");
+
+    const socket = new WebSocket(wsUrl);
+
+    socket.binaryType = 'blob';
+
+    socket.onopen = function() {
+      console.log("[Mini-Dev] Connected. Sending password...");
+      socket.send(password);
+    };
+
+    socket.onmessage = function(event) {
+      const blob = event.data;
+      const url = URL.createObjectURL(blob);
+      screenImg.src = url;
+      setTimeout(() => URL.revokeObjectURL(url), 100);
+    };
+
+    socket.onclose = function() {
+      console.log("[Mini-Dev] Disconnected or authentication failed.");
+      alert("Disconnected or authentication failed!");
+    };
+
+    fullscreenBtn.addEventListener('click', () => {
+      if (document.fullscreenElement) {
+        document.exitFullscreen();
+      } else {
+        document.documentElement.requestFullscreen();
+      }
+    });
+  </script>
+</body>
+</html>
+
+
+
