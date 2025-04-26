@@ -46,32 +46,29 @@
     const screenImg = document.getElementById('screen');
     const fullscreenBtn = document.getElementById('fullscreen-btn');
 
-    // ✅ Your reserved ngrok domain
+    // ✅ Your ngrok domain (change if needed)
     const wsUrl = "wss://roon-viewer.ngrok.dev/ws";
 
     const password = prompt("Enter Password:");
     const socket = new WebSocket(wsUrl);
     socket.binaryType = 'blob';
 
-    socket.onopen = function() {
-      console.log("[Mini-Dev] Connected. Sending password after safe 500ms delay...");
-      setTimeout(() => {
-        socket.send(password);
-        console.log("[Mini-Dev] Password sent.");
-      }, 500);
-    };
+    socket.addEventListener('open', function() {
+      console.log("[Mini-Dev] WebSocket fully open — sending password...");
+      socket.send(password);
+    });
 
-    socket.onmessage = function(event) {
+    socket.addEventListener('message', function(event) {
       const blob = event.data;
       const url = URL.createObjectURL(blob);
       screenImg.src = url;
       setTimeout(() => URL.revokeObjectURL(url), 100);
-    };
+    });
 
-    socket.onclose = function() {
+    socket.addEventListener('close', function() {
       console.log("[Mini-Dev] Disconnected or authentication failed.");
       alert("Disconnected or authentication failed!");
-    };
+    });
 
     fullscreenBtn.addEventListener('click', () => {
       if (document.fullscreenElement) {
