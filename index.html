@@ -47,10 +47,8 @@
     const fullscreenBtn = document.getElementById('fullscreen-btn');
 
     // ✅ Correct WebSocket URL in HTTP mode
-    const wsUrl = "ws://e45d-2607-fb91-1c6a-8125-2da2-da03-736b-7cac.ngrok-free.app/ws";
-
+    const wsUrl = "wss://roon-viewer.ngrok.dev/ws";
     const password = prompt("Enter Password:");
-
     const socket = new WebSocket(wsUrl);
     socket.binaryType = 'blob';
 
